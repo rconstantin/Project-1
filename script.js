@@ -3,7 +3,7 @@ var scrolled = 0; // A variable to keep track of how far we've scrolled.
 var fractionScrolled = scrolled / scrollTotal;
 
 
-// You can read more about the mosuewheel event at https://developer.mozilla.org/en-US/docs/DOM/DOM_event_reference/mousewheel
+// You can read more about the mousewheel event at https://developer.mozilla.org/en-US/docs/DOM/DOM_event_reference/mousewheel
 if (document.addEventListener) {
 	document.addEventListener("mousewheel", MouseWheelHandler, false);
 }
@@ -14,15 +14,22 @@ for (i = 0; i < waypoints.length; i++) {
 	// Here we attach a handler to the click event for every waypoint,
 	// https://developer.mozilla.org/en-US/docs/Web/Reference/Events/click
 	waypoints[i].addEventListener("click", waypointClickHandler, false);
+	// RC: Attach Hover Handler for each waypoint
+	waypoints[i].addEventListener("mouseover", waypointMouseoverHandler, false);
+	waypoints[i].addEventListener("mouseout", waypointMouseoutHandler, false);
 }
+// RC: Add Click Handler for the "next-triangle": 
+var nextTriangle = document.getElementById('next-triangle');
+nextTriangle.addEventListener("click", nextTriangleClickHandler,false);
+
 
 function updateWaypoints() {
 	fractionScrolled = scrolled / scrollTotal;
-
+	console.log ('fractionScrolled :', fractionScrolled);
 	// 0 <= fractionScrolled <= 1, so *10 gives us 10; Math.floor rounds down
-	var whichWaypoint = Math.max(0, Math.floor(fractionScrolled * 10) - 1);
-
+	// RC: -1 in the Math.floor is causing a problem for first transition from 0 -> 1
 	var whichWaypoint = Math.max(0, Math.floor(fractionScrolled * 10));
+	console.log('calculated waypoint: ', whichWaypoint);
 	for (i = 0; i < 10; i++) {
 		// Notice we constructed our li#id names to make this easy
 		var currentWaypoint = document.getElementById('waypoint-' + i);
@@ -41,15 +48,36 @@ function updateWaypoints() {
 }
 
 function waypointClickHandler(e) {
-	console.log('cilck');
+	console.log('click');
 	for (i = 0; i < waypoints.length; i++) {
 		if (waypoints[i] === this) {
+			// RC: No need for the +1 since we fixed the floor in update waypoint
+			scrolled = (i)*100;
 			updateWaypoints();
 			console.log(scrolled);
 		}
 	}
 }
 
+// use to add text description for each waypoint
+function waypointMouseoverHandler(e) {
+	console.log(e);
+	for (i = 0; i < waypoints.length; i++) {
+		if (waypoints[i] === this) {
+			// RC: change cursor to pointer and add html text describing waypoint
+			
+		}
+	}
+}
+// clear text
+function waypointMouseoutHandler(e) {
+	console.log('Mouseout event: ', e);
+	for (i = 0; i < waypoints.length; i++) {
+		if (waypoints[i] === this) {
+			// RC: change cursor to pointer and add html text describing waypoint
+		}
+	}
+}
 
 function MouseWheelHandler(e) {
 	// This function is called every time there's a mousewheelevent
@@ -60,4 +88,15 @@ function MouseWheelHandler(e) {
 	document.getElementsByTagName('header')[0].innerHTML = scrolled;
 	
 	updateWaypoints();
+}
+// this function updates waypoint to next on next-tri click
+function nextTriangleClickHandler(e) {
+	if (scrolled < scrollTotal) {
+		scrolled += 100;
+		updateWaypoints();
+	}
+	else { 
+		console.log ("reached the end, scrolled = ", scrolled);
+
+	}
 }
