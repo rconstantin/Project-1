@@ -21,7 +21,7 @@ header, footer {
 	line-height: 64px; /* By making the line-height as tall as the header, we vertically center the text */
 
 	color: #EEE;
-	font-family: "Lily Script One", cursive;
+	font-family: "Frijole", cursive; /*RC: Changed fonts*/
 	font-size: 2em;
 	text-align: center;
 	text-transform: uppercase;
@@ -86,6 +86,7 @@ http://codepen.io/chriscoyier/pen/lotjh */
 
 #next-triangle:hover {
 	border-top: 30.75px solid #555;
+	cursor: pointer;
 }
 
 /* DETAIL PANELS */
@@ -139,6 +140,18 @@ nav ol li {
 
 .active-waypoint {
 	background-color: #D12121;
+}
+
+.waypoint:hover {
+	background-color: yellow;
+	transition: 1000ms ease;
+	-webkit-transition: 1000ms ease;
+
+	/* Rotate only 10 degrees so that the effect of translate is more obvious */
+	transform: rotate(90deg);
+	-webkit-transform: rotate(90deg);
+	border-radius: 100%;
+	cursor: pointer;
 }
 
 li div {
