@@ -1,11 +1,11 @@
 var scrollTotal = 1000;
 var scrolled = 0; // A variable to keep track of how far we've scrolled.
 var fractionScrolled = scrolled / scrollTotal;
-
+var newContent = null;
 
 // You can read more about the mousewheel event at https://developer.mozilla.org/en-US/docs/DOM/DOM_event_reference/mousewheel
 if (document.addEventListener) {
-	document.addEventListener("mousewheel", MouseWheelHandler, false);
+	document.addEventListener("mousewheel", MouseWheelHandler, false);	
 }
 
 
@@ -14,9 +14,9 @@ for (i = 0; i < waypoints.length; i++) {
 	// Here we attach a handler to the click event for every waypoint,
 	// https://developer.mozilla.org/en-US/docs/Web/Reference/Events/click
 	waypoints[i].addEventListener("click", waypointClickHandler, false);
-	// RC: Attach Hover Handler for each waypoint
-	waypoints[i].addEventListener("mouseover", waypointMouseoverHandler, false);
-	waypoints[i].addEventListener("mouseout", waypointMouseoutHandler, false);
+	waypoints[i].addEventListener("mouseover", MouseOverHandler, false);
+	waypoints[i].addEventListener("mouseout", MouseOutHandler, false);
+
 }
 // RC: Add Click Handler for the "next-triangle": 
 var nextTriangle = document.getElementById('next-triangle');
@@ -30,19 +30,25 @@ function updateWaypoints() {
 	// RC: -1 in the Math.floor is causing a problem for first transition from 0 -> 1
 	var whichWaypoint = Math.max(0, Math.floor(fractionScrolled * 10));
 	console.log('calculated waypoint: ', whichWaypoint);
+	
+	var animateId = document.getElementById('left-top');
+	animateId.classList.remove('animate');
+	animateId.classList.add('animate');
+
 	for (i = 0; i < 10; i++) {
 		// Notice we constructed our li#id names to make this easy
 		var currentWaypoint = document.getElementById('waypoint-' + i);
-		
 		if ( i == whichWaypoint ) {
 			currentWaypoint.classList.add('active-waypoint');
+
 		}
 		
 		else {
 			currentWaypoint.classList.remove('active-waypoint');
 		}
+		
 	}
-
+	animateId.classList.remove('animate');
 	// Seek to the proportional time of the 38s clip of Bey's "Countdown"
 	document.getElementById('Countdown').currentTime = fractionScrolled * 38.0;
 }
@@ -60,21 +66,42 @@ function waypointClickHandler(e) {
 }
 
 // use to add text description for each waypoint
-function waypointMouseoverHandler(e) {
-	console.log(e);
+function MouseOverHandler(e) {
+	console.log('waypoint:', this);
+	my_div = document.getElementById("wp-desc");
 	for (i = 0; i < waypoints.length; i++) {
 		if (waypoints[i] === this) {
 			// RC: change cursor to pointer and add html text describing waypoint
-			
+			//new_div = document.createElement("div");
+			//my_div = document.getElementById('wp-' + i);
+			newContent = document.createTextNode(document.getElementById('waypoint-' + i).title);
+  			
+  			// add the newly created element and its content into the DOM
+  			//my_div.style.textAlign = 'right';
+  			//new_div.appendChild(newContent); //add the text node to the newly created div.
+  			my_div.appendChild(newContent);
+  			my_div.style.top = (15 + 60*i)+'px';
+  			//my_div.style.textIndent = -10em;
+  			//var parentDiv = my_div.parentNode;
+
+			// Insert the new element into the DOM before my_div
+			//parentDiv.insertBefore(new_div, my_div);
+
 		}
 	}
 }
 // clear text
-function waypointMouseoutHandler(e) {
-	console.log('Mouseout event: ', e);
+function MouseOutHandler(e) {
+	
 	for (i = 0; i < waypoints.length; i++) {
 		if (waypoints[i] === this) {
-			// RC: change cursor to pointer and add html text describing waypoint
+			// my_div = document.getElementById("wp-desc");
+			//my_div = document.getElementById('wp-' + i);
+			my_div.removeChild(newContent);
+			newContent = null;
+			//var parentDiv = my_div.parentNode;
+  			//parentDiv.removeChild(new_div);
+  			//new_div = null;
 		}
 	}
 }
